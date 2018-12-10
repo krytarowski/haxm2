@@ -9,10 +9,19 @@ MODULE(MODULE_CLASS_MISC, haxm, NULL);
 static int
 haxm_modcmd(modcmd_t cmd, void *arg __unused)
 {
+	struct cpu_info *ci;
+	CPU_INFO_ITERATOR cii;
+
 	switch (cmd) {
 	case MODULE_CMD_INIT: {
 		// Initialization
 		max_cpus = 0;
+
+		ci = NULL;
+
+		for (CPU_INFO_FOREACH(cii, ci)) {
+			++max_cpus;
+		}
 		return 0;
 	}
 	case MODULE_CMD_FINI:
