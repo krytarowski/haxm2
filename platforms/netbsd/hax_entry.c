@@ -21,6 +21,9 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 
 		for (CPU_INFO_FOREACH(cii, ci)) {
 			++max_cpus;
+			if (!ISSET(ci->ci_schedstate.spc_flags, SPCF_OFFLINE)) {
+				cpu_online_map |= __BIT(ci->ci_cpuid);
+			}
 		}
 		return 0;
 	}
