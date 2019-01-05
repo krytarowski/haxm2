@@ -267,6 +267,11 @@ init_err1:
 		return ENXIO;
 	}
 	case MODULE_CMD_FINI:
+		if (hax_module_exit() < 0) {
+			hax_error("Failed to finalize HAXM module\n");
+			return EBUSY;
+		}
+
 		return 0;
 	default:
 		return ENOTTY;
