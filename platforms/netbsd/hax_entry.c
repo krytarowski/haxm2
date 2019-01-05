@@ -276,6 +276,14 @@ init_err1:
 		devsw_detach(NULL, &hax_vm_cdevsw);
 		devsw_detach(NULL, &hax_cdevsw);
 
+		config_cfdata_detach(hax_vcpu_cfdata);
+		config_cfattach_detach(hax_vcpu_cd.cd_name, &hax_vcpu_ca);
+		config_cfdriver_detach(&hax_vcpu_cd);
+
+		config_cfdata_detach(hax_vm_cfdata);
+		config_cfattach_detach(hax_vm_cd.cd_name, &hax_vm_ca);
+		config_cfdriver_detach(&hax_vm_cd);
+
 		return 0;
 	default:
 		return ENOTTY;
