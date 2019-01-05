@@ -3,13 +3,13 @@
 
 #ifdef _KERNEL
 struct hax_vm_softc {
-    device_t sc_dev;
-    struct hax_vm_netbsd_t *vm;
+	device_t sc_dev;
+	struct hax_vm_netbsd_t *vm;
 };
 
 struct hax_vcpu_softc {
-    device_t sc_dev;
-    struct hax_vcpu_netbsd_t *vcpu;
+	device_t sc_dev;
+	struct hax_vcpu_netbsd_t *vcpu;
 };
 #endif
 
