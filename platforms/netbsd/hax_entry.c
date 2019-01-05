@@ -243,6 +243,7 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err10;
 		}
 
+		hax_info("Created HAXM device\n");
 		return 0;
 init_err10:
 		devsw_detach(NULL, &hax_vcpu_cdevsw);
