@@ -67,6 +67,24 @@ static const struct cfiattrdata *const hax_vm_attrs[] = {
 };
 
 CFDRIVER_DECL(hax_vm, DV_DULL, hax_vm_attrs);
+static int hax_vmloc[] = {
+	-1,
+	-1,
+	-1
+};
+
+static struct cfdata hax_vm_cfdata[] = {
+	{
+		.cf_name = "hax_vm",
+		.cf_atname = "hax_vm",
+		.cf_unit = 0,
+		.cf_fstate = FSTATE_STAR,
+		.cf_loc = hax_vmloc,
+		.cf_flags = 0,
+		.cf_pspec = NULL,
+	},
+	{ NULL, NULL, 0, FSTATE_NOTFOUND, NULL, 0, NULL }
+};
 
 MODULE(MODULE_CLASS_MISC, haxm, NULL);
 
@@ -104,7 +122,15 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err2;
 		}
 
+		err = config_cfdata_attach(hax_vm_cfdata, 1);
+		if (err) {
+			hax_error("Unable to register cfdata hax_vm\n");
+			goto init_err3;
+		}
+
 		return 0;
+init_err3:
+		config_cfattach_detach(hax_vm_cd.cd_name, &hax_vm_ca);
 init_err2:
 		config_cfdriver_detach(&hax_vm_cd);
 init_err1:
