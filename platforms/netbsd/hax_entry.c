@@ -46,6 +46,16 @@ hax_vm_attach(device_t parent, device_t self, void *aux)
 static int
 hax_vm_detach(device_t self, int flags)
 {
+    struct hax_vm_softc *sc;
+
+    sc = device_private(self);
+    if (sc == NULL) {
+        hax_error("device_private() for hax_vm failed\n");
+        return -ENODEV;
+    }
+    pmf_device_deregister(self);
+
+    return 0;
 }
 
 static const struct cfiattrdata haxbus_iattrdata = {
