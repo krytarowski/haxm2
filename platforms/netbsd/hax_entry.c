@@ -5,6 +5,7 @@
 #include <sys/module.h>
 
 #include "../../core/include/config.h"
+#include "../../core/include/hax_core_interface.h"
 #include "../../include/hax.h"
 #include "../../include/hax_interface.h"
 
@@ -236,7 +237,15 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 		for (i = 0; i < (HAX_MAX_VMS * HAX_MAX_VCPUS); i++)
 			config_attach_pseudo(hax_vcpu_cfdata);
 
+		// Initialize HAXM
+		if (hax_module_init() < 0) {
+			hax_error("Failed to initialize HAXM module\n");
+			goto init_err10;
+		}
+
 		return 0;
+init_err10:
+		devsw_detach(NULL, &hax_vcpu_cdevsw);
 init_err9:
 		devsw_detach(NULL, &hax_vm_cdevsw);
 init_err8:
