@@ -4,5 +4,6 @@
 extern int default_hax_log_level;
 
 void hax_error(char *fmt, ...);
+void hax_info(char *fmt, ...);
 
 #endif  // HAX_NETBSD_HAX_NETBSD_H_

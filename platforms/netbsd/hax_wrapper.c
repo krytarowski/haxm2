@@ -20,3 +20,16 @@ void hax_error(char *fmt, ...)
 	vprintf(fmt, args);
 	va_end(args);
 }
+
+void hax_info(char *fmt, ...)
+{
+	va_list args;
+
+	if (HAX_LOGI < default_hax_log_level)
+		return;
+
+	va_start(args, fmt);
+	printf("haxm_info: ");
+	vprintf(fmt, args);
+	va_end(args);
+}
