@@ -17,53 +17,53 @@ CFATTACH_DECL_NEW(hax_vm, sizeof(struct hax_vm_softc),
 static int
 hax_vm_match(device_t parent, cfdata_t match, void *aux)
 {
-    return 1;
+	return 1;
 }
 
 static void
 hax_vm_attach(device_t parent, device_t self, void *aux)
 {
-    struct hax_vm_softc *sc;
-    int unit;
+	struct hax_vm_softc *sc;
+	int unit;
 
-    sc = device_private(self);
-    if (sc == NULL) {
-        hax_error("device_private() for hax_vm failed\n");
-        return;
-    }
+	sc = device_private(self);
+	if (sc == NULL) {
+		hax_error("device_private() for hax_vm failed\n");
+		return;
+	}
 
-    unit = device_unit(self);
+	unit = device_unit(self);
 
-    sc->sc_dev = self;
-    sc->vm = NULL;
+	sc->sc_dev = self;
+	sc->vm = NULL;
 
-    snprintf(self->dv_xname, sizeof self->dv_xname, "hax_vm/vm%02d", unit);
+	snprintf(self->dv_xname, sizeof self->dv_xname, "hax_vm/vm%02d", unit);
 
-    if (!pmf_device_register(self, NULL, NULL))
-        aprint_error_dev(self, "couldn't establish power handler\n");
+	if (!pmf_device_register(self, NULL, NULL))
+		aprint_error_dev(self, "couldn't establish power handler\n");
 }
 
 static int
 hax_vm_detach(device_t self, int flags)
 {
-    struct hax_vm_softc *sc;
+	struct hax_vm_softc *sc;
 
-    sc = device_private(self);
-    if (sc == NULL) {
-        hax_error("device_private() for hax_vm failed\n");
-        return -ENODEV;
-    }
-    pmf_device_deregister(self);
+	sc = device_private(self);
+	if (sc == NULL) {
+		hax_error("device_private() for hax_vm failed\n");
+		return -ENODEV;
+	}
+	pmf_device_deregister(self);
 
-    return 0;
+	return 0;
 }
 
 static const struct cfiattrdata haxbus_iattrdata = {
-    "haxbus", 0, { { NULL, NULL, 0 },}
+	"haxbus", 0, { { NULL, NULL, 0 },}
 };
 
 static const struct cfiattrdata *const hax_vm_attrs[] = {
-    &haxbus_iattrdata, NULL
+	&haxbus_iattrdata, NULL
 };
 
 CFDRIVER_DECL(hax_vm, DV_DULL, hax_vm_attrs);
