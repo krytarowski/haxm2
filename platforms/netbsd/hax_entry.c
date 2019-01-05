@@ -4,6 +4,7 @@
 #include <sys/device.h>
 #include <sys/module.h>
 
+#include "../../core/include/config.h"
 #include "../../include/hax.h"
 #include "../../include/hax_interface.h"
 
@@ -153,6 +154,7 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 	struct cpu_info *ci;
 	CPU_INFO_ITERATOR cii;
 	int err;
+	size_t i;
 
 	switch (cmd) {
 	case MODULE_CMD_INIT: {
@@ -227,6 +229,9 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			hax_error("Failed to register HAXM VCPU device\n");
 			goto init_err9;
 		}
+
+		for (i = 0; i < HAX_MAX_VMS; i++)
+			config_attach_pseudo(hax_vm_cfdata);
 
 		return 0;
 init_err9:
