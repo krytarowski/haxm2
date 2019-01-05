@@ -14,6 +14,13 @@ static int hax_vm_detach(device_t, int);
 CFATTACH_DECL_NEW(hax_vm, sizeof(struct hax_vm_softc),
                   hax_vm_match, hax_vm_attach, hax_vm_detach, NULL);
 
+static int hax_vcpu_match(device_t, cfdata_t, void *);
+static void hax_vcpu_attach(device_t, device_t, void *);
+static int hax_vcpu_detach(device_t, int);
+
+CFATTACH_DECL_NEW(hax_vcpu, sizeof(struct hax_vcpu_softc),
+                  hax_vcpu_match, hax_vcpu_attach, hax_vcpu_detach, NULL);
+
 static int
 hax_vm_match(device_t parent, cfdata_t match, void *aux)
 {
@@ -58,6 +65,22 @@ hax_vm_detach(device_t self, int flags)
 	return 0;
 }
 
+static int
+hax_vcpu_match(device_t parent, cfdata_t match, void *aux)
+{
+	return 1;
+}
+
+static void
+hax_vcpu_attach(device_t parent, device_t self, void *aux)
+{
+}
+
+static int
+hax_vcpu_detach(device_t self, int flags)
+{
+}
+
 static const struct cfiattrdata haxbus_iattrdata = {
 	"haxbus", 0, { { NULL, NULL, 0 },}
 };
@@ -80,6 +103,30 @@ static struct cfdata hax_vm_cfdata[] = {
 		.cf_unit = 0,
 		.cf_fstate = FSTATE_STAR,
 		.cf_loc = hax_vmloc,
+		.cf_flags = 0,
+		.cf_pspec = NULL,
+	},
+	{ NULL, NULL, 0, FSTATE_NOTFOUND, NULL, 0, NULL }
+};
+
+static const struct cfiattrdata *const hax_vcpu_attrs[] = {
+	&haxbus_iattrdata, NULL
+};
+
+CFDRIVER_DECL(hax_vcpu, DV_DULL, hax_vcpu_attrs);
+static int hax_vcpuloc[] = {
+	-1,
+	-1,
+	-1
+};
+
+static struct cfdata hax_vcpu_cfdata[] = {
+	{
+		.cf_name = "hax_vcpu",
+		.cf_atname = "hax_vcpu",
+		.cf_unit = 0,
+		.cf_fstate = FSTATE_STAR,
+		.cf_loc = hax_vcpuloc,
 		.cf_flags = 0,
 		.cf_pspec = NULL,
 	},
@@ -128,7 +175,16 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err3;
 		}
 
+		// Register hax_vcpu
+		err = config_cfdriver_attach(&hax_vcpu_cd);
+		if (err) {
+			hax_error("Unable to register cfdriver hax_vcpu\n");
+			goto init_err4;
+		}
+
 		return 0;
+init_err4:
+		config_cfdata_detach(hax_vm_cfdata);
 init_err3:
 		config_cfattach_detach(hax_vm_cd.cd_name, &hax_vm_ca);
 init_err2:
