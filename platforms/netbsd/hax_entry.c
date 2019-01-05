@@ -88,11 +88,42 @@ hax_vcpu_match(device_t parent, cfdata_t match, void *aux)
 static void
 hax_vcpu_attach(device_t parent, device_t self, void *aux)
 {
+	struct hax_vcpu_softc *sc;
+	int unit, vm_id, cpu_id;
+
+	sc = device_private(self);
+	if (sc == NULL) {
+		hax_error("device_private() for hax_vcpu failed\n");
+		return;
+	}
+
+	unit = device_unit(self);
+	vm_id = unit2vmmid(unit);
+	cpu_id = unit2vcpuid(unit);
+
+	sc->sc_dev = self;
+	sc->vcpu = NULL;
+
+	snprintf(self->dv_xname, sizeof self->dv_xname, "hax_vm%02d/vcpu%02d",
+	         vm_id, cpu_id);
+
+	if (!pmf_device_register(self, NULL, NULL))
+		aprint_error_dev(self, "couldn't establish power handler\n");
 }
 
 static int
 hax_vcpu_detach(device_t self, int flags)
 {
+	struct hax_vcpu_softc *sc;
+
+	sc = device_private(self);
+	if (sc == NULL) {
+		hax_error("device_private() for hax_vcpu failed\n");
+		return -ENODEV;
+	}
+	pmf_device_deregister(self);
+
+	return 0;
 }
 
 static const struct cfiattrdata haxbus_iattrdata = {
@@ -211,21 +242,21 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 
 		// Register device entries
 		err = devsw_attach(HAX_DEVICE_NAME, NULL, &hax_bmajor, &hax_cdevsw,
-                       &hax_cmajor);
+		                   &hax_cmajor);
 		if (err) {
 			hax_error("Failed to register HAXM device\n");
 			goto init_err7;
 		}
 
 		err = devsw_attach(HAX_VM_DEVICE_NAME, NULL, &hax_vm_bmajor, &hax_vm_cdevsw,
-		       &hax_vm_cmajor);
+		                   &hax_vm_cmajor);
 		if (err) {
 			hax_error("Failed to register HAXM VM device\n");
 			goto init_err8;
 		}
 
 		err = devsw_attach(HAX_VCPU_DEVICE_NAME, NULL, &hax_vcpu_bmajor, &hax_vcpu_cdevsw,
-		       &hax_vcpu_cmajor);
+		                   &hax_vcpu_cmajor);
 		if (err) {
 			hax_error("Failed to register HAXM VCPU device\n");
 			goto init_err9;
