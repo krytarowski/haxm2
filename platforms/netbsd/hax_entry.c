@@ -272,6 +272,10 @@ init_err1:
 			return EBUSY;
 		}
 
+		devsw_detach(NULL, &hax_vcpu_cdevsw);
+		devsw_detach(NULL, &hax_vm_cdevsw);
+		devsw_detach(NULL, &hax_cdevsw);
+
 		return 0;
 	default:
 		return ENOTTY;
