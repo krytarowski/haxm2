@@ -7,6 +7,12 @@
 #include "../../include/hax.h"
 #include "../../include/hax_interface.h"
 
+#define HAX_DEVICE_NAME "HAX"
+
+static int hax_cmajor = 220, hax_bmajor = -1;
+
+extern struct cdevsw hax_cdevsw;
+
 static int hax_vm_match(device_t, cfdata_t, void *);
 static void hax_vm_attach(device_t, device_t, void *);
 static int hax_vm_detach(device_t, int);
@@ -194,7 +200,17 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err6;
 		}
 
+		// Register device entries
+		err = devsw_attach(HAX_DEVICE_NAME, NULL, &hax_bmajor, &hax_cdevsw,
+                       &hax_cmajor);
+		if (err) {
+			hax_error("Failed to register HAXM device\n");
+			goto init_err7;
+		}
+
 		return 0;
+init_err7:
+		config_cfdata_detach(hax_vcpu_cfdata);
 init_err6:
 		config_cfattach_detach(hax_vcpu_cd.cd_name, &hax_vcpu_ca);
 init_err5:
