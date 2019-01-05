@@ -23,6 +23,24 @@ hax_vm_match(device_t parent, cfdata_t match, void *aux)
 static void
 hax_vm_attach(device_t parent, device_t self, void *aux)
 {
+    struct hax_vm_softc *sc;
+    int unit;
+
+    sc = device_private(self);
+    if (sc == NULL) {
+        hax_error("device_private() for hax_vm failed\n");
+        return;
+    }
+
+    unit = device_unit(self);
+
+    sc->sc_dev = self;
+    sc->vm = NULL;
+
+    snprintf(self->dv_xname, sizeof self->dv_xname, "hax_vm/vm%02d", unit);
+
+    if (!pmf_device_register(self, NULL, NULL))
+        aprint_error_dev(self, "couldn't establish power handler\n");
 }
 
 static int
