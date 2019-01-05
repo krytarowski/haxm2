@@ -9,12 +9,15 @@
 
 #define HAX_DEVICE_NAME "HAX"
 #define HAX_VM_DEVICE_NAME "hax_vm"
+#define HAX_VCPU_DEVICE_NAME "hax_vcpu"
 
 static int hax_cmajor = 220, hax_bmajor = -1;
 static int hax_vm_cmajor = 222, hax_vm_bmajor = -1;
+static int hax_vcpu_cmajor = 221, hax_vcpu_bmajor = -1;
 
 extern struct cdevsw hax_cdevsw;
 extern struct cdevsw hax_vm_cdevsw;
+extern struct cdevsw hax_vcpu_cdevsw;
 
 static int hax_vm_match(device_t, cfdata_t, void *);
 static void hax_vm_attach(device_t, device_t, void *);
@@ -218,7 +221,16 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err8;
 		}
 
+		err = devsw_attach(HAX_VCPU_DEVICE_NAME, NULL, &hax_vcpu_bmajor, &hax_vcpu_cdevsw,
+		       &hax_vcpu_cmajor);
+		if (err) {
+			hax_error("Failed to register HAXM VCPU device\n");
+			goto init_err9;
+		}
+
 		return 0;
+init_err9:
+		devsw_detach(NULL, &hax_vm_cdevsw);
 init_err8:
 		devsw_detach(NULL, &hax_cdevsw);
 init_err7:
