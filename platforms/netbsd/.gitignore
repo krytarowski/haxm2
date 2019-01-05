@@ -1,0 +1,9 @@
+# Build
+*.kmod.map
+*.kmod
+*.o
+*~
+amd64
+i386
+machine
+x86
