@@ -182,7 +182,16 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err4;
 		}
 
+		err = config_cfattach_attach(hax_vcpu_cd.cd_name, &hax_vcpu_ca);
+		if (err) {
+			hax_error("Unable to register cfattch hax_vcpu\n");
+			goto init_err5;
+		}
+
+
 		return 0;
+init_err5:
+		config_cfdriver_detach(&hax_vcpu_cd);
 init_err4:
 		config_cfdata_detach(hax_vm_cfdata);
 init_err3:
