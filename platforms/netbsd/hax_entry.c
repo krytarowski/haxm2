@@ -233,6 +233,9 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 		for (i = 0; i < HAX_MAX_VMS; i++)
 			config_attach_pseudo(hax_vm_cfdata);
 
+		for (i = 0; i < (HAX_MAX_VMS * HAX_MAX_VCPUS); i++)
+			config_attach_pseudo(hax_vcpu_cfdata);
+
 		return 0;
 init_err9:
 		devsw_detach(NULL, &hax_vm_cdevsw);

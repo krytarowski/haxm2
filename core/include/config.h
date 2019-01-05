@@ -1,6 +1,8 @@
 #ifndef HAX_CORE_CONFIG_H_
 #define HAX_CORE_CONFIG_H_
 
+#define HAX_MAX_VCPUS 16
+
 #ifdef __NetBSD__
 // TODO: Handle 64 VMs
 #define HAX_MAX_VMS 8
