@@ -5,6 +5,30 @@
 #include <sys/module.h>
 
 #include "../../include/hax.h"
+#include "../../include/hax_interface.h"
+
+static int hax_vm_match(device_t, cfdata_t, void *);
+static void hax_vm_attach(device_t, device_t, void *);
+static int hax_vm_detach(device_t, int);
+
+CFATTACH_DECL_NEW(hax_vm, sizeof(struct hax_vm_softc),
+                  hax_vm_match, hax_vm_attach, hax_vm_detach, NULL);
+
+static int
+hax_vm_match(device_t parent, cfdata_t match, void *aux)
+{
+    return 1;
+}
+
+static void
+hax_vm_attach(device_t parent, device_t self, void *aux)
+{
+}
+
+static int
+hax_vm_detach(device_t self, int flags)
+{
+}
 
 static const struct cfiattrdata haxbus_iattrdata = {
     "haxbus", 0, { { NULL, NULL, 0 },}
@@ -45,8 +69,16 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			hax_error("Unable to register cfdriver hax_vm\n");
 			goto init_err1;
 		}
-		return 0;
 
+		err = config_cfattach_attach(hax_vm_cd.cd_name, &hax_vm_ca);
+		if (err) {
+			hax_error("Unable to register cfattach hax_vm\n");
+			goto init_err2;
+		}
+
+		return 0;
+init_err2:
+		config_cfdriver_detach(&hax_vm_cd);
 init_err1:
 		return ENXIO;
 	}
