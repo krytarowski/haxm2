@@ -188,8 +188,15 @@ haxm_modcmd(modcmd_t cmd, void *arg __unused)
 			goto init_err5;
 		}
 
+		err = config_cfdata_attach(hax_vcpu_cfdata, 1);
+		if (err) {
+			hax_error("Unable to register cfdata hax_vcpu\n");
+			goto init_err6;
+		}
 
 		return 0;
+init_err6:
+		config_cfattach_detach(hax_vcpu_cd.cd_name, &hax_vcpu_ca);
 init_err5:
 		config_cfdriver_detach(&hax_vcpu_cd);
 init_err4:
