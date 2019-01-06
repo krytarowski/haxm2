@@ -1,6 +1,8 @@
 #ifndef HAX_CORE_HAX_DRIVER_H_
 #define HAX_CORE_HAX_DRIVER_H_
 
+#include "vm.h"
+
 struct hax_t {
 	int vmx_enable_flag;
 	int nx_enable_flag;
