@@ -9,6 +9,11 @@ struct hax_t {
 	int em64t_enable_flag;
 	int ug_enable_flag;
 
+	/*
+	 * Common architectural performance monitoring (APM) parameters
+	 * (version ID, etc.) supported by all logical processors of
+	 * the host CPU.
+	 */
 	uint apm_version;
 	uint apm_general_count;
 	uint64_t apm_general_mask;
