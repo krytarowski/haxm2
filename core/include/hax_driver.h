@@ -2,6 +2,7 @@
 #define HAX_CORE_HAX_DRIVER_H_
 
 #include "vm.h"
+#include "pmu.h"
 
 struct hax_t {
 	int vmx_enable_flag;
@@ -21,6 +22,9 @@ struct hax_t {
 	uint32_t apm_event_unavailability;
 	uint apm_fixed_count;
 	uint64_t apm_fixed_mask;
+
+	// Unparsed CPUID leaf 0xa output for CPUID virtualization
+	struct cpu_pmu_info apm_cpuid_0xa;
 };
 
 #endif // HAX_CORE_HAX_DRIVER_H_
