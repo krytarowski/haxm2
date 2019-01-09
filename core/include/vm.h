@@ -3,4 +3,6 @@
 
 #include "../../include/hax.h"
 
+#include "memory.h"
+
 #endif // HAX_CORE_VM_H_
