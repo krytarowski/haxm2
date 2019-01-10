@@ -20,6 +20,14 @@ typedef unsigned int  uint;
 typedef unsigned long ulong;
 typedef unsigned long ulong_t;
 
+#if defined(__i386__)
+typedef uint32_t mword;
+#endif
+#if defined(__x86_64__)
+typedef uint64_t mword;
+#endif
+typedef mword HAX_VADDR_T;
+
 typedef int hax_cpumap_t;
 
 #endif  // HAX_NETBSD_HAX_TYPES_NETBSD_H_
