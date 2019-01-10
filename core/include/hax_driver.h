@@ -27,6 +27,7 @@ struct hax_t {
 	struct cpu_pmu_info apm_cpuid_0xa;
 
 	hax_list_head hax_vmlist;
+	hax_mutex hax_lock;
 };
 
 #endif // HAX_CORE_HAX_DRIVER_H_
