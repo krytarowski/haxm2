@@ -28,6 +28,20 @@ typedef uint64_t mword;
 #endif
 typedef mword HAX_VADDR_T;
 
+#include "../hax_list.h"
+struct hax_page {
+	void *kva;
+	struct vm_page *page;
+	struct pglist *pglist;
+	uint64_t pa;
+	uint32_t order;
+	uint32_t flags;
+	struct hax_link_list list;
+	size_t size;
+};
+
 typedef int hax_cpumap_t;
+
+typedef kmutex_t *hax_mutex;
 
 #endif  // HAX_NETBSD_HAX_TYPES_NETBSD_H_
