@@ -28,6 +28,8 @@ struct hax_t {
 
 	hax_list_head hax_vmlist;
 	hax_mutex hax_lock;
+	uint64_t mem_limit;
+	uint64_t mem_quota;
 };
 
 #endif // HAX_CORE_HAX_DRIVER_H_
