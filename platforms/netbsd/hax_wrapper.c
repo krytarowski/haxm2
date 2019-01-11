@@ -1,7 +1,8 @@
 #include <sys/param.h>
 #include <sys/types.h>
+#include <sys/kmem.h>
+#include <sys/mutex.h>
 #include <sys/systm.h>
-
 
 #include "../../include/hax.h"
 
@@ -32,4 +33,49 @@ void hax_info(char *fmt, ...)
 	printf("haxm_info: ");
 	vprintf(fmt, args);
 	va_end(args);
+}
+
+/* Mutex */
+hax_mutex
+hax_mutex_alloc_init(void)
+{
+	kmutex_t *lock;
+
+	lock = kmem_alloc(sizeof(kmutex_t), KM_SLEEP);
+	if (!lock) {
+		hax_error("Could not allocate mutex\n");
+		return NULL;
+	}
+
+	mutex_init(lock, MUTEX_DEFAULT, IPL_NONE);
+
+	return lock;
+}
+
+void
+hax_mutex_lock(hax_mutex lock)
+{
+	if (!lock)
+		return;
+
+	mutex_enter(lock);
+}
+
+void
+hax_mutex_unlock(hax_mutex lock)
+{
+	if (!lock)
+		return;
+
+	mutex_exit(lock);
+}
+
+void
+hax_mutex_free(hax_mutex lock)
+{
+	if (!lock)
+		return;
+
+	mutex_destroy(lock);
+	kmem_free(lock, sizeof(kmutex_t));
 }
