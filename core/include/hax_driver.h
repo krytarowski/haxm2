@@ -32,4 +32,7 @@ struct hax_t {
 	uint64_t mem_quota;
 };
 
+uint64_t hax_get_memory_threshold(void);
+extern struct hax_t *hax;
+
 #endif // HAX_CORE_HAX_DRIVER_H_
