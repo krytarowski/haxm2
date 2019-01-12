@@ -126,6 +126,73 @@
  *  - IA32_EFER (64-bits)
  *  - IA32_BNDCFGS (64-bits)
  * SMBASE (32-bits)
+ *
+ * Guest Non-Register State
+ * ------------------------
+ * - activity state (32-bits)
+ *   # 0 = active : the logical processor is executing instructions normally
+ *   # 1 = HLT : the logical cpu is inactive because it executed the HLT
+ *               instruction
+ *   # 2 = shutdown : cpu is inactive because it incurred triple fault or other
+ *                    serious error
+ *   # 3 = wait-for-SIPI : cpu waiting for SIPI (SIPI = startup IPI)
+ *
+ *   MSR IA32_VMX_MISC - software should read it to detect activity states
+ *
+ * - interruptibility state (32-bits) : features that permit certain events to
+ *                                      be blocked for a period of time
+ *   # bit 0 - blocking by STI (set interrupt flag)
+ *   # bit 1 - blocking by mov ss/pop ss
+ *   # bit 2 - blocking by SMI (system-management interrupts)
+ *   # bit 3 - blocking by NMI (non-maskable interrupts)
+ *   # bit 4 - enclave interruption : vm exit caught
+ *   # bit 5-31 - reserved - vm entry will fail if these bits are not 0
+ *
+ * - pending debug exceptions (64 bits on 64-bit cpu, 32bit on 32bit)
+ *   # bit 3-0 
+ *
+ * - VMCS link pointer (64-bits)
+ *
+ * - VMX-preemption timer value (32-bits)
+ *
+ * - page-directory-pointer-table entries (PDPEs, 64-bits each) : EPT needed
+ *   # PDPTE0
+ *   # PDPTE1
+ *   # PDPTE2
+ *   # PDPTE3
+ * This corresponds to PDPTE referenced by CR3 when PAE paging is in use.
+ *
+ * - guest interrupt status (16-bits)
+ *   # requesting virtual interrupt (RVI)
+ *   # servicing virtual interrupt (SVI)
+ *
+ * - PML index (16-vit)
+ *
+ * HOST-STATE AREA
+ * ---------------
+ * CR0, CR3, CR4
+ *
+ * RSP, RIP
+ *
+ * selector fields (16-bit) for the segment registers CS, SS, DS, ES, FS, GS, TR
+ * (no field for LDTR)
+ *
+ * MSRs: IA32_SYSENTER_CS (32-bits)
+ *       IA32_SYSENTER_ESP and IA32_SYSENTER_EIP (64/32bit)
+ *       IA32_PERF_GLOBAL_CTRL (64-bits)
+ *       IA32_PAT (64-bit)
+ *       IA32_EFER (64-bit)
+ *
+ * VM-EXECUTION CONTROL FIELDS
+ * ---------------------------
+ * - pin-based vm-execution controls
+ * - processor-based vm-execution controls
+ * - exception bitmap
+ * - i/o-bitmap addresses
+ * - time-stamp counter offset and multiplier
+ * - guest/host masks and read shadows for CR0 and CR4
+ * - CR3-Target Controls
+ * - Controls for APIC Virtualization
  */
 
 struct per_cpu_data {
