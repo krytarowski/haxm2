@@ -198,6 +198,7 @@
 struct per_cpu_data {
 	struct hax_page		*vmxon_page;
 	struct hax_page		*vmcx_page;
+	struct vcpu_t		*current_vcpu;
 };
 
 #endif // HAX_CORE_CPU_H_
