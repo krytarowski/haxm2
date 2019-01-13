@@ -195,6 +195,37 @@
  * - Controls for APIC Virtualization
  */
 
+#define VMXON_SUCCESS	0x0
+#define VMXON_FAIL	0x1
+#define VMPTRLD_FAIL	0x2
+
+struct vcpu_t;
+struct vcpu_state_t;
+
+typedef uint32_t hax_cpuid_t;	// CPU identifier
+
+#define NR_HMSR 6
+
+struct hstate {
+	/* ldt is not covered by host vmcs area */
+	uint16_t ldt_selector;
+	uint16_t ds;
+	uint16_t es;
+	uint16_t fs;
+	uint16_t gs;
+	uint16_t seg_valid;
+#define HOST_SEG_VALID_GS	0x1
+#define HOST_SEG_VALID_FS	0x2
+#define HOST_SEG_VALID_DS	0x4
+#define HOST_SEG_VALID_ES	0x8
+	uint16_t seg_not_present;
+#define HOST_SEG_NOT_PRESENT_GS	0x1
+	uint64_t _efer;
+	uint64_t gs_base;
+	uint64_t fs_base;
+	uint64_t hcr2;
+};
+
 struct per_cpu_data {
 	struct hax_page		*vmxon_page;
 	struct hax_page		*vmcx_page;
